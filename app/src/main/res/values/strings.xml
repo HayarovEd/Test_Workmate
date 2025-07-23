@@ -6,4 +6,11 @@
     <string name="female">female</string>
     <string name="male">male</string>
     <string name="genderless">genderless</string>
+    <string name="error_read">read error</string>
+    <string name="error_write">Write error</string>
+    <string name="server_error">Server error</string>
+    <string name="bad_request">Bad request</string>
+    <string name="request_timeout">Request timeout</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="format_error">Format error</string>
 </resources>
