@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Test Workmate</string>
+    <string name="alive">alive</string>
+    <string name="dead">dead</string>
+    <string name="unknown">unknown</string>
+    <string name="female">female</string>
+    <string name="male">male</string>
+    <string name="genderless">genderless</string>
 </resources>
