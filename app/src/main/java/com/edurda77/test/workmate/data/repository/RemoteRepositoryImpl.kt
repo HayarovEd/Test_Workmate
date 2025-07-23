@@ -76,7 +76,7 @@ class RemoteRepositoryImpl(
             species = species,
             imageUrl = image,
             status = status.convertToStatusCharacter(),
-            gender = status.convertToGender(),
+            gender = gender.convertToGender(),
             location = location.name,
             origin = origin.name,
             episode = episode.map { it.substringAfterLast("/") }

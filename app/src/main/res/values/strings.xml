@@ -13,4 +13,5 @@
     <string name="request_timeout">Request timeout</string>
     <string name="unknown_error">Unknown error</string>
     <string name="format_error">Format error</string>
+    <string name="do_data">No data</string>
 </resources>

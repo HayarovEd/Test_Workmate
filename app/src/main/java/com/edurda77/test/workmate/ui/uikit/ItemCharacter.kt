@@ -1,7 +1,7 @@
 package com.edurda77.test.workmate.ui.uikit
 
-import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,20 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.edurda77.test.workmate.domain.model.CharacterDetails
 import com.edurda77.test.workmate.domain.model.Gender
 import com.edurda77.test.workmate.domain.model.StatusCharacter
 import com.edurda77.test.workmate.ui.theme.background
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun ItemCharacter(
@@ -48,7 +44,7 @@ fun ItemCharacter(
         StatusCharacter.DEAD -> Color.Red
         StatusCharacter.UNKNOWN -> Color.White
     }
-    val context = LocalContext.current
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = background
@@ -63,13 +59,9 @@ fun ItemCharacter(
             Box(
                 modifier = modifier.fillMaxWidth()
             ) {
-                Log.d("TEST WORKMATE1", "imageUrl ${characterDetails.imageUrl}")
                 AsyncImage(
                     modifier = modifier.fillMaxWidth(),
-                    model = "https://rickandmortyapi.com/api/character/avatar/34.jpeg",
-                    onError = {
-                        Log.d("TEST WORKMATE1", "imageUrl ${it.result.throwable.message}")
-                    },
+                    model = characterDetails.imageUrl,
                     contentDescription = "",
                     contentScale = ContentScale.FillWidth
                 )
@@ -90,22 +82,29 @@ fun ItemCharacter(
                     Spacer(modifier = modifier.width(5.dp))
                     Text(
                         text = stringResource(characterDetails.status.resId),
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = Color.White.copy(alpha = 0.8f),
+                        fontSize = 10.sp
                     )
                 }
             }
             Spacer(modifier = modifier.height(15.dp))
             Text(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .basicMarquee(),
                 text = characterDetails.name,
                 color = Color.White,
-                fontSize = 20.sp
+                maxLines = 1,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = modifier.height(15.dp))
             Text(
                 text = "${stringResource(characterDetails.gender.resId)} | ${characterDetails.species}",
                 color = Color.White.copy(alpha = 0.8f),
-                fontSize = 18.sp
+                fontSize = 12.sp
             )
+            Spacer(modifier = modifier.height(15.dp))
         }
     }
 }

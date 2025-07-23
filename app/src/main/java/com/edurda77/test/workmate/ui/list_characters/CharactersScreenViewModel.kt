@@ -7,6 +7,7 @@ import com.edurda77.test.workmate.domain.repository.ServiceRepository
 import com.edurda77.test.workmate.domain.utils.Paginator
 import com.edurda77.test.workmate.domain.utils.convertToString
 import com.edurda77.test.workmate.ui.uikit.asUiText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -70,10 +71,12 @@ class CharactersScreenViewModel(
                 viewModelScope.launch {
                     paginator.reset()
                     _state.value.copy(
+                        isNextLoading = true,
                         characters = emptyList(),
                         message = null
                     )
                         .updateState()
+                    delay(1000)
                     paginator.loadNextItems()
                 }
             }
