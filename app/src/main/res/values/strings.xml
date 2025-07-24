@@ -21,4 +21,7 @@
     <string name="consel">Cansel</string>
     <string name="confirm">Ok</string>
     <string name="enter_name">Enter name</string>
+    <string name="origin">Origin</string>
+    <string name="location">Location</string>
+    <string name="episodes">Episodes</string>
 </resources>

@@ -56,13 +56,15 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CharactersScreenRoot(
-    viewModel: CharactersScreenViewModel = koinViewModel()
+    viewModel: CharactersScreenViewModel = koinViewModel(),
+    onCharacterClick: (Int) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CharactersScreenScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onCharacterClick = onCharacterClick
     )
 }
 
@@ -72,6 +74,7 @@ fun CharactersScreenScreen(
     modifier: Modifier = Modifier,
     state: CharactersScreenState,
     onAction: (CharactersScreenAction) -> Unit,
+    onCharacterClick: (Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -229,7 +232,7 @@ fun CharactersScreenScreen(
                         ItemCharacter(
                             characterDetails = character,
                             onClick = {
-
+                                onCharacterClick(character.id)
                             }
                         )
                     }
@@ -246,7 +249,8 @@ private fun Preview() {
         state = CharactersScreenState(
             isNextLoading = true
         ),
-        onAction = {}
+        onAction = {},
+        onCharacterClick = {}
     )
 }
 
@@ -308,6 +312,7 @@ private fun Preview2() {
                 ),
             )
         ),
-        onAction = {}
+        onAction = {},
+        onCharacterClick = {}
     )
 }
