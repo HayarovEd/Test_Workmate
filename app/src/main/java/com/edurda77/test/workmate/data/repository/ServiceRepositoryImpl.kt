@@ -17,8 +17,8 @@ class ServiceRepositoryImpl (
     private val connectivityManager = application.getSystemService<ConnectivityManager>()!!
 
 
-    override val isConnected: Flow<Boolean>
-        get() = callbackFlow {
+    override fun isConnected(): Flow<Boolean>
+        = callbackFlow {
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onCapabilitiesChanged(
                     network: Network,

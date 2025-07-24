@@ -79,6 +79,7 @@ class RemoteRepositoryImpl(
             gender = gender.convertToGender(),
             location = location.name,
             origin = origin.name,
+            type = type,
             episode = episode.map { it.substringAfterLast("/") }
         )
     }

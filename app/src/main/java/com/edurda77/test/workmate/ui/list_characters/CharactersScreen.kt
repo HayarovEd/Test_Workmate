@@ -138,7 +138,9 @@ fun CharactersScreenScreen(
                     .distinctUntilChanged()
                     .collect { lastVisibleIndex ->
                         if (lastVisibleIndex == state.characters.lastIndex) {
-                            onAction(CharactersScreenAction.OnNextLoad)
+                            if (state.isEnableInternet) {
+                                onAction(CharactersScreenAction.OnNextLoad)
+                            }
                         }
                     }
             }
@@ -265,6 +267,7 @@ private fun Preview2() {
                     gender = Gender.MALE,
                     location = "Earth (Replacement Dimension)",
                     origin = "Earth (Replacement Dimension)",
+                    type = "",
                     episode = listOf("1", "2", "3", "4", "5")
                 ),
                 CharacterDetails(
@@ -276,6 +279,7 @@ private fun Preview2() {
                     gender = Gender.MALE,
                     location = "Earth (Replacement Dimension)",
                     origin = "Earth (Replacement Dimension)",
+                    type = "",
                     episode = listOf("1", "2", "3", "4", "5")
                 ),
                 CharacterDetails(
@@ -287,6 +291,7 @@ private fun Preview2() {
                     gender = Gender.MALE,
                     location = "Earth (Replacement Dimension)",
                     origin = "Earth (Replacement Dimension)",
+                    type = "",
                     episode = listOf("1", "2", "3", "4", "5")
                 ),
                 CharacterDetails(
@@ -298,6 +303,7 @@ private fun Preview2() {
                     gender = Gender.MALE,
                     location = "Earth (Replacement Dimension)",
                     origin = "Earth (Replacement Dimension)",
+                    type = "",
                     episode = listOf("1", "2", "3", "4", "5")
                 ),
             )

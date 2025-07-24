@@ -10,5 +10,6 @@ data class CharacterDetails(
     val gender: Gender,
     val location : String,
     val origin: String,
+    val type: String,
     val episode: List<String>,
 )

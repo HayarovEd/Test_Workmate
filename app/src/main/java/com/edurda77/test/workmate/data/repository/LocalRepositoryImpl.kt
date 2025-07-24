@@ -32,6 +32,7 @@ class LocalRepositoryImpl(
                             imageUrl = it.imageUrl,
                             location = it.location,
                             origin = it.origin,
+                            type = it.type,
                             episode = it.episode
                         )
                     }
@@ -82,6 +83,7 @@ class LocalRepositoryImpl(
             imageUrl = imageUrl,
             location = location,
             origin = origin,
+            type = type,
             episode = episode
         )
     }

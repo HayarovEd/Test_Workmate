@@ -9,7 +9,7 @@ data class CharactersScreenState(
    // val isLoading: Boolean = false,
     val isNextLoading: Boolean = false,
     val message: UiText? = null,
-    val isEnableInternet: Boolean = true,
+    val isEnableInternet: Boolean = false,
     val characters: List<CharacterDetails> = emptyList(),
     val queryName: String = "",
     val status: StatusCharacter? = null,

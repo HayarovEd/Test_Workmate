@@ -2,21 +2,29 @@ package com.edurda77.test.workmate.ui.list_characters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.test.workmate.domain.model.CharacterDetails
+import com.edurda77.test.workmate.domain.repository.LocalRepository
 import com.edurda77.test.workmate.domain.repository.RemoteRepository
 import com.edurda77.test.workmate.domain.repository.ServiceRepository
 import com.edurda77.test.workmate.domain.utils.Paginator
+import com.edurda77.test.workmate.domain.utils.ResultWork
 import com.edurda77.test.workmate.domain.utils.convertToString
 import com.edurda77.test.workmate.ui.uikit.asUiText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CharactersScreenViewModel(
     private val remoteRepository: RemoteRepository,
+    private val localRepository: LocalRepository,
     private val serviceRepository: ServiceRepository,
 ) : ViewModel() {
+
+    private val localResults = MutableStateFlow<List<CharacterDetails>>(emptyList())
 
     private val paginator = Paginator(
         initialKey = 1,
@@ -46,6 +54,7 @@ class CharactersScreenViewModel(
                 .updateState()
         },
         onSuccess = { productsResponse, nextPage ->
+            localRepository.insertCharacters(productsResponse.characters)
             _state.value.copy(
                 characters = state.value.characters + productsResponse.characters,
                 message = null
@@ -58,26 +67,68 @@ class CharactersScreenViewModel(
         }
     )
     private val _state = MutableStateFlow(CharactersScreenState())
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            startWork()
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = CharactersScreenState()
+        )
 
-    init {
-        loadNextItems()
-    }
 
     fun onAction(action: CharactersScreenAction) {
         when (action) {
             CharactersScreenAction.OnNextLoad -> loadNextItems()
             CharactersScreenAction.OnRefresh -> {
-                viewModelScope.launch {
-                    paginator.reset()
+                if (state.value.isEnableInternet) {
+                    viewModelScope.launch {
+                        paginator.reset()
+                        _state.value.copy(
+                            isNextLoading = true,
+                            characters = emptyList(),
+                            message = null
+                        )
+                            .updateState()
+                        delay(1000)
+                        paginator.loadNextItems()
+                    }
+                } else {
+                    val filteredData = if (state.value.gender==null&&state.value.status==null) {
+                        localResults.value.filter {
+                            it.name.contains(state.value.queryName, ignoreCase = true)
+                                    && it.species.contains(state.value.species, ignoreCase = true)
+                                    && it.type.contains(state.value.type, ignoreCase = true)
+                        }
+                    } else if (state.value.status==null) {
+                        localResults.value.filter {
+                            it.name.contains(state.value.queryName, ignoreCase = true)
+                                    && it.species.contains(state.value.species, ignoreCase = true)
+                                    && it.type.contains(state.value.type, ignoreCase = true)
+                                    && it.gender == state.value.gender
+                        }
+                    } else  if (state.value.gender==null) {
+                        localResults.value.filter {
+                            it.name.contains(state.value.queryName, ignoreCase = true)
+                                    && it.species.contains(state.value.species, ignoreCase = true)
+                                    && it.type.contains(state.value.type, ignoreCase = true)
+                                    && it.status == state.value.status
+                        }
+                    } else {
+                        localResults.value.filter {
+                            it.name.contains(state.value.queryName, ignoreCase = true)
+                                    && it.species.contains(state.value.species, ignoreCase = true)
+                                    && it.type.contains(state.value.type, ignoreCase = true)
+                                    && it.status == state.value.status
+                                    && it.gender == state.value.gender
+                        }
+                    }
                     _state.value.copy(
-                        isNextLoading = true,
-                        characters = emptyList(),
-                        message = null
+                        characters = filteredData,
+                        isNextLoading = false
                     )
                         .updateState()
-                    delay(1000)
-                    paginator.loadNextItems()
                 }
             }
 
@@ -124,6 +175,51 @@ class CharactersScreenViewModel(
                     queryName = action.name
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private fun startWork() {
+        viewModelScope.launch {
+            serviceRepository.isConnected().collect {
+                if (it) {
+                    loadNextItems()
+                } else {
+                    loadLocalaData()
+                }
+                _state.value.copy(
+                    isEnableInternet = it
+                )
+                    .updateState()
+            }
+        }
+    }
+
+    private fun loadLocalaData() {
+        _state.value.copy(
+            isNextLoading = true
+        )
+            .updateState()
+        viewModelScope.launch {
+            localRepository.getAllCharacters().collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = collector.error.asUiText(),
+                            isNextLoading = false
+                        )
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        localResults.value = collector.data
+                        _state.value.copy(
+                            characters = collector.data,
+                            isNextLoading = false
+                        )
+                            .updateState()
+                    }
+                }
             }
         }
     }

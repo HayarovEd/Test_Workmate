@@ -122,6 +122,7 @@ private fun ItemCharacterView() {
             gender = Gender.MALE,
             location = "Earth (Replacement Dimension)",
             origin = "Earth (Replacement Dimension)",
+            type = "",
             episode = listOf("1", "2", "3", "4", "5")
         ),
         onClick = {}
