@@ -67,7 +67,7 @@ class CharactersScreenViewModel(
     fun onAction(action: CharactersScreenAction) {
         when (action) {
             CharactersScreenAction.OnNextLoad -> loadNextItems()
-            CharactersScreenAction.onRefresh -> {
+            CharactersScreenAction.OnRefresh -> {
                 viewModelScope.launch {
                     paginator.reset()
                     _state.value.copy(
@@ -79,6 +79,44 @@ class CharactersScreenViewModel(
                     delay(1000)
                     paginator.loadNextItems()
                 }
+            }
+
+            is CharactersScreenAction.OnUpdateGender -> {
+                _state.value.copy(
+                    gender = action.gender
+                )
+                    .updateState()
+            }
+
+            is CharactersScreenAction.OnUpdateSpecies -> {
+                _state.value.copy(
+                    species = action.species
+                )
+                    .updateState()
+            }
+
+            is CharactersScreenAction.OnUpdateStatus -> {
+                _state.value.copy(
+                    status = action.status
+                )
+                    .updateState()
+            }
+
+            is CharactersScreenAction.OnUpdateType -> {
+                _state.value.copy(
+                    type = action.type
+                )
+                    .updateState()
+            }
+
+            CharactersScreenAction.OnResetFilters -> {
+                _state.value.copy(
+                    type = "",
+                    species = "",
+                    status = null,
+                    gender = null
+                )
+                    .updateState()
             }
         }
     }

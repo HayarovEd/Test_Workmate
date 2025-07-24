@@ -14,4 +14,10 @@
     <string name="unknown_error">Unknown error</string>
     <string name="format_error">Format error</string>
     <string name="do_data">No data</string>
+    <string name="select_filters">Select filters</string>
+    <string name="enter_species">Enter spacies</string>
+    <string name="enter_type">Enter type</string>
+    <string name="reset_filters">Reset filters</string>
+    <string name="consel">Cansel</string>
+    <string name="confirm">Ok</string>
 </resources>

@@ -1,33 +1,39 @@
 package com.edurda77.test.workmate.ui.list_characters
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +43,7 @@ import com.edurda77.test.workmate.R
 import com.edurda77.test.workmate.domain.model.CharacterDetails
 import com.edurda77.test.workmate.domain.model.Gender
 import com.edurda77.test.workmate.domain.model.StatusCharacter
+import com.edurda77.test.workmate.ui.theme.background
 import com.edurda77.test.workmate.ui.uikit.ItemCharacter
 import com.edurda77.test.workmate.ui.uikit.UiBaseScaffold
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -61,9 +68,25 @@ fun CharactersScreenScreen(
     state: CharactersScreenState,
     onAction: (CharactersScreenAction) -> Unit,
 ) {
-
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
     UiBaseScaffold(
-        message = state.message
+        message = state.message,
+        fabContent = {
+            FloatingActionButton(
+                shape = CircleShape,
+                containerColor = background,
+                onClick = {
+                    showBottomSheet = true
+                }
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_filter_alt_24),
+                    contentDescription = "",
+                    tint = Color.White.copy(alpha = 0.8f)
+                )
+            }
+        }
     ) { paddingValues ->
         val lazyListState = rememberLazyGridState()
 
@@ -80,6 +103,43 @@ fun CharactersScreenScreen(
                     }
             }
         }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                sheetState = sheetState
+            ) {
+                BottomSheetContent(
+                    status = state.status,
+                    gender = state.gender,
+                    species = state.species,
+                    type = state.type,
+                    onClickCansel = {
+                        showBottomSheet = false
+                    },
+                    onClickConfirm = {
+                        onAction(CharactersScreenAction.OnRefresh)
+                        showBottomSheet = false
+                    },
+                    onUpdateType = {
+                        onAction(CharactersScreenAction.OnUpdateType(it))
+                    },
+                    onUpdateGender = {
+                        onAction(CharactersScreenAction.OnUpdateGender(it))
+                    },
+                    onUpdateStatus = {
+                        onAction(CharactersScreenAction.OnUpdateStatus(it))
+                    },
+                    onUpdateSpecies = {
+                        onAction(CharactersScreenAction.OnUpdateSpecies(it))
+                    },
+                    onClickResetFilters = {
+                        onAction(CharactersScreenAction.OnResetFilters)
+                    }
+                )
+            }
+        }
         PullToRefreshBox(
             modifier = modifier
                 .padding(paddingValues)
@@ -87,7 +147,7 @@ fun CharactersScreenScreen(
                 .background(Color.White)
                 .padding(15.dp),
             isRefreshing = state.isNextLoading,
-            onRefresh = { onAction(CharactersScreenAction.onRefresh) },
+            onRefresh = { onAction(CharactersScreenAction.OnRefresh) },
             indicator = {
                 if (state.isNextLoading) {
                     CircularProgressIndicator(
