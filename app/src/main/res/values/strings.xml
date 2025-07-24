@@ -20,4 +20,5 @@
     <string name="reset_filters">Reset filters</string>
     <string name="consel">Cansel</string>
     <string name="confirm">Ok</string>
+    <string name="enter_name">Enter name</string>
 </resources>

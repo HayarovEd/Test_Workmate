@@ -118,6 +118,13 @@ class CharactersScreenViewModel(
                 )
                     .updateState()
             }
+
+            is CharactersScreenAction.OnUpdateName -> {
+                _state.value.copy(
+                    queryName = action.name
+                )
+                    .updateState()
+            }
         }
     }
 
