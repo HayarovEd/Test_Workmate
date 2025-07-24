@@ -9,3 +9,5 @@ const val UNKNOWN = "Unknown"
 
 const val ALIVE = "Alive"
 const val DEAD = "Dead"
+
+const val CASHE_DB = "cashe_db"
